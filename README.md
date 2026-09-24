@@ -1,222 +1,129 @@
-# A/B Test — ЖКХ Payment Form
+# A/B-тестирование новой формы оплаты ЖКХ
 
-## Executive Summary
+Анализ результатов A/B-теста новой формы оплаты ЖКХ с автозаполнением.
 
-This case study evaluates a new ЖКХ payment form designed to simplify the payment process through autofill.
+## О проекте
 
-The experiment compared the existing payment form (Control) with the new form (Test) and measured its impact on successful payment conversion.
+В рамках эксперимента сравнивалась текущая форма оплаты ЖКХ с новой версией, в которой используется автозаполнение платёжных данных.
 
-**Key result:** the new form increased conversion from **65.7% to 80.4%**, an absolute uplift of **+14.7 percentage points** and a relative uplift of **+22.3%**.
+**Продуктовый вопрос:**
 
-The observed difference was statistically significant at the 5% significance level.
+> Увеличивает ли новая форма оплаты конверсию пользователей от открытия формы до успешного завершения платежа?
 
----
+## Дизайн эксперимента
 
-## Business Problem
+* **Период:** 1–30 апреля 2024 года
+* **Группа A:** текущая форма оплаты
+* **Группа B:** новая форма с автозаполнением
+* **Основная метрика:** конверсия от открытия формы до успешной оплаты
+* **Уровень значимости:** α = 0,05
 
-The goal was to determine whether a redesigned ЖКХ payment form could increase the share of users who successfully complete a payment.
+Воронка:
 
-The new form introduced **autofill of payment details**, with the objective of reducing friction during the payment process.
+**Открытие формы → Ввод реквизитов → Подтверждение → Успешная оплата**
 
-The key product question was:
+Поскольку один пользователь может совершить несколько платежей, основная метрика рассчитывается **на уровне пользователя**.
 
-> Does the new payment form increase successful payment conversion compared with the existing form?
+Пользователь считается сконвертировавшимся, если хотя бы один его платёж достиг этапа успешной оплаты.
 
----
+## Результаты
 
-## Hypothesis
+| Метрика               |      Результат |
+| --------------------- | -------------: |
+| Конверсия группы A    |          65,7% |
+| Конверсия группы B    |          80,4% |
+| Абсолютный прирост    |     +14,7 п.п. |
+| Относительный прирост |         +22,3% |
+| 95% ДИ для разницы    | [10,2%; 19,1%] |
+| p-value               |         < 0,05 |
 
-### Product hypothesis
+Статистический тест показал статистически значимое различие конверсии между группами.
 
-Introducing autofill into the ЖКХ payment form will increase the conversion rate from opening the payment form to successfully completing a payment.
+Дополнительно проведён анализ результатов по типу устройства и городу пользователя. Различие конверсии сохраняется во всех рассмотренных сегментах.
 
-### Statistical hypotheses
+## Что было сделано
 
-**H₀:** Conversion in the new form is not higher than in the existing form.
+### 1. Подготовка данных
 
-**H₁:** Conversion in the new form is higher than in the existing form.
+* загружены данные пользователей и платежей;
+* проверены пропущенные значения;
+* обработаны возрастные выбросы;
+* удалены пользователи с отсутствующей экспериментальной группой или городом;
+* проверены дубликаты платежей;
+* исключены платежи без соответствующего пользователя;
+* объединены данные пользователей и платежей;
+* проверено соответствие экспериментальных групп.
 
-Significance level:
+### 2. Анализ воронки
 
-**α = 0.05**
+Рассмотрено прохождение пользователей и платежей через этапы:
 
----
+**Открытие → Ввод данных → Подтверждение → Успешная оплата**
 
-## Experiment Design
+### 3. Статистический анализ
 
-| Parameter          | Description                                        |
-| ------------------ | -------------------------------------------------- |
-| Experiment period  | April 1–30, 2024                                   |
-| Control group      | Existing payment form                              |
-| Test group         | New payment form with autofill                     |
-| Primary metric     | Conversion from form opening to successful payment |
-| Statistical test   | One-sided z-test for two proportions               |
-| Significance level | 0.05                                               |
+Для проверки основной гипотезы использован односторонний z-тест для сравнения двух пропорций.
 
-### Conversion funnel
+Гипотезы:
 
-```text
-Opened form
-     ↓
-Enter details
-     ↓
-Confirmation
-     ↓
-Successful payment
-```
+* **H₀:** конверсия в группе B не выше конверсии в группе A;
+* **H₁:** конверсия в группе B выше конверсии в группе A.
 
-The analysis was performed at the **user level**.
+Также рассчитаны:
 
-A user was considered converted if at least one of their payments reached the final successful-payment step.
+* абсолютная разница конверсий;
+* относительный прирост;
+* 95% доверительный интервал для разницы конверсий.
 
----
+### 4. Сегментный анализ
 
-## Data Preparation
+Проверено изменение конверсии в разрезе:
 
-The analysis used two datasets:
+* типа устройства;
+* города пользователя.
 
-* `Users`
-* `Payments`
+## Итог
 
-Before calculating the primary metric, the data was cleaned and validated.
+Новая форма оплаты показала рост конверсии от открытия формы до успешной оплаты с **65,7% до 80,4%**.
 
-Key steps included:
+На основании результатов A/B-теста рекомендуется рассмотреть раскатку новой формы на всех пользователей с последующим мониторингом ключевой метрики после релиза.
 
-* removing isolated age outliers;
-* handling records with missing city or experiment group;
-* removing payments without a corresponding user ID;
-* reconciling experiment group assignments after joining the datasets, with the user table used as the priority source;
-* aggregating payment activity at the user level;
-* checking the balance of the experiment groups.
-
----
-
-## Key Metrics
-
-| Metric                        | Control |         Test |
-| ----------------------------- | ------: | -----------: |
-| Successful payment conversion |   65.7% |    **80.4%** |
-| Absolute uplift               |       — | **+14.7 pp** |
-| Relative uplift               |       — |   **+22.3%** |
-
-### Confidence interval
-
-The 95% confidence interval for the conversion difference is:
-
-**[10.2%; 19.1%]**
-
-This indicates that the estimated uplift is positive across the entire confidence interval.
-
----
-
-## Statistical Significance
-
-A one-sided z-test for two proportions was used to test whether conversion in the Test group was higher than in the Control group.
-
-**p-value ≈ 7.6 × 10⁻¹¹**
-
-Since:
-
-**p < 0.05**
-
-the null hypothesis was rejected.
-
-The difference in conversion between the two groups is statistically significant at the 5% significance level.
-
----
-
-## Segment Analysis
-
-The uplift was also examined across selected user segments.
-
-### By device
-
-| Device  | Control |  Test |       Uplift |
-| ------- | ------: | ----: | -----------: |
-| Android |   64.5% | 79.9% | **+15.4 pp** |
-| iOS     |   67.2% | 80.8% | **+13.6 pp** |
-
-### By city
-
-| Segment       |       Uplift |
-| ------------- | -----------: |
-| Moscow        | **+18.2 pp** |
-| St Petersburg | **+15.8 pp** |
-| Regions       |  **+9.5 pp** |
-
-The positive uplift was observed across all analyzed device and geographic segments.
-
----
-
-## Product Recommendation
-
-Based on the experiment results, the new payment form should be rolled out to all users.
-
-The observed conversion uplift is both:
-
-* **material from a product perspective** (+14.7 pp);
-* **statistically significant** (p < 0.05).
-
-After rollout, conversion should be monitored during the first week to confirm that the observed effect is maintained in the full user population.
-
----
-
-## Methodology
-
-The analysis included:
-
-1. Data cleaning and validation
-2. Dataset joining
-3. Experiment group validation
-4. User-level aggregation
-5. Funnel analysis
-6. Primary metric calculation
-7. Statistical hypothesis testing
-8. Confidence interval estimation
-9. Segment analysis
-10. Product recommendation
-
-The detailed analysis and calculations are available in the Jupyter Notebook.
-
----
-
-## Repository Structure
+## Структура проекта
 
 ```text
 ab-test-payment-form/
-│
 ├── README.md
-│
 ├── notebooks/
 │   └── ab_test_analysis.ipynb
-│
 ├── reports/
 │   └── figures/
 │       ├── funnel.png
 │       ├── conversion_overall.png
 │       ├── conversion_by_device.png
 │       └── conversion_by_city.png
-│
 ├── data/
 │   └── README.md
-│
 ├── requirements.txt
 └── .gitignore
 ```
 
----
-
-## Tools
+## Используемые инструменты
 
 * Python
 * pandas
 * NumPy
-* SciPy
 * Matplotlib
+* statsmodels
 * Jupyter Notebook
+* Excel
 
----
+## Основные навыки
 
-## Project Focus
-
-**Product Analytics · A/B Testing · Experimentation · Conversion Optimization · Statistical Analysis**
+* A/B-тестирование
+* анализ конверсии
+* проверка статистической значимости
+* доверительные интервалы
+* анализ продуктовой воронки
+* сегментный анализ
+* очистка и подготовка данных
+* формирование продуктовых рекомендаций
