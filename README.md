@@ -98,7 +98,6 @@ ab-test-payment-form/
 ├── reports/
 │   └── figures/
 │       ├── funnel.png
-│       ├── conversion_overall.png
 │       ├── conversion_by_device.png
 │       └── conversion_by_city.png
 ├── data/
